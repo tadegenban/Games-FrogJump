@@ -15,6 +15,12 @@ Play the game with command:
 
   frogjump
 
+=begin HTML
+
+<p><img src="http://ww3.sinaimg.cn/large/a8e976cegw1ej24klqiqkj20gf07gt8t.jpg" /></p>
+
+=end HTML
+
 =head1 AUTHOR
 
 tadegenban <tadegenban@gmail.com>
