@@ -13,7 +13,6 @@ goto endofperl
 #!/usr/bin/env perl
 #line 15
 use 5.012;
-use lib 'lib';
 use Games::FrogJump;
 Games::FrogJump->new->run;
 

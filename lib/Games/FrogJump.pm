@@ -31,7 +31,7 @@ package Games::FrogJump;
 use 5.012;
 use Moo;
 
-our $VERSION = '0.08';
+our $VERSION = '0.01';
 
 use Time::HiRes;
 
@@ -39,7 +39,6 @@ use constant {
 	FRAME_TIME => 1/4,
 };
 
-use lib '../../lib';
 use Games::FrogJump::Game;
 use Games::FrogJump::Frog;
 use Games::FrogJump::Input;
