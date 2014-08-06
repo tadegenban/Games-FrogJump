@@ -1,3 +1,4 @@
 *.org
-dist.ini
 Games-FrogJump*
+MANIFEST.SKIP
+Changes
