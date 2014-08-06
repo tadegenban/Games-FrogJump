@@ -127,8 +127,8 @@ sub board_width {
 
 sub move_cursor {
     my ( $self, $dx, $dy ) = @_;
-    $dx > 0 ? do { printf "\e[%dC", $dx } : do { printf "\e[%dD", -$dx };
-    $dy > 0 ? do { printf "\e[%dB", $dy } : do { printf "\e[%dA", -$dy };
+    $dx > 0 ? do { printf "\e[%dC", $dx } : $dx < 0 ? do { printf "\e[%dD", -$dx } : do {};
+    $dy > 0 ? do { printf "\e[%dB", $dy } : $dy < 0 ? do { printf "\e[%dA", -$dy } : do {};
 }
 
 sub save_cursor {
