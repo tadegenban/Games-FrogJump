@@ -56,6 +56,7 @@ sub run {
             $game = Games::FrogJump::Game->new();
         }
         $game->init;
+        
       RUN: $game->draw;
 		my $time = Time::HiRes::time;
       PLAY: while ( 1 ) {

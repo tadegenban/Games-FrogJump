@@ -7,7 +7,7 @@ use Term::ANSIColor;
 has direction    => is => 'ro', default => 'null';
 has stone_index  => is => 'rw', default => -1;
 has width        => is => 'rw', default => 3;
-has bg_color     => is => 'rw', default => 'on_black';
+has bg_color     => is => 'rw', default => 'reset';
 has fr_color     => is => 'rw', default => 'blue';
 has stored_ansi  => is => 'rw';
 has ansi         => is => 'rw', default => '   ';

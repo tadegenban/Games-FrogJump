@@ -152,6 +152,12 @@ sub show_cursor {
     print "\e[?25h";
 }
 
+sub clear_screen {
+    my $self = shift;
+    print "\e[1J";
+    print "\e[1;1H";
+}
+
 sub get_frog {
     my $self = shift;
     my $n    = shift;

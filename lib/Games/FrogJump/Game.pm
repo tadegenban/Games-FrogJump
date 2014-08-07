@@ -30,6 +30,7 @@ sub init {
     $self->set_current_frog($self->get_frog(0));
     $SIG{INT} = sub { $self->draw_quit; exit 1 };
     $SIG{__DIE__} = sub { $self->draw_quit; exit 1};
+    $self->clear_screen;
 }
 
 sub act {
