@@ -103,7 +103,8 @@ sub draw_win {
 sub draw_quit {
     my $self = shift;
     $self->move_cursor(0, $self->content_height + 5);
-    say '';
+    say color('reset') . '';
+    $self->show_cursor;
 }
 sub draw_border {
     my $self = shift;
@@ -183,6 +184,5 @@ sub set_current_frog {
     $self->current_frog($frog);
     $frog->active;
 }
-
 
 1;
