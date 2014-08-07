@@ -31,7 +31,7 @@ package Games::FrogJump;
 use 5.012;
 use Moo;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Time::HiRes;
 
