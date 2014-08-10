@@ -21,16 +21,6 @@ Play the game with command:
 
 =end HTML
 
-=head1 TODO
-
-=over
-
-=item * Add some tip when can not jump
-
-=item * Add an animation
-
-=back
-
 =head1 ACKNOWLEDGEMENTS
 
 BLAIZER, Author of L<Games::2048>
