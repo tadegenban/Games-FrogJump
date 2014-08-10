@@ -3,12 +3,12 @@ use 5.012;
 
 use Moo;
 
-has name          => is => 'rw', default => undef;
+has name          => is => 'rw', default => '';
 has current_frame => is => 'rw', default => 0;
 has duration      => is => 'rw', default => 0;
-has obj           => is => 'rw', default => undef;
-has attr          => is => 'rw', default => undef;
-has snapshot      => is => 'rw', default => undef;
+has obj           => is => 'rw', default => '';
+has attr          => is => 'rw', default => '';
+has snapshot      => is => 'rw', default => '';
 
 sub frame_count {
     my $self = shift;
