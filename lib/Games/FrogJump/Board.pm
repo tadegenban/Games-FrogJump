@@ -1,55 +1,67 @@
 package Games::FrogJump::Board;
 use 5.012;
+use strict;
+use warnings;
 use Moo;
 
 use Text::Wrap;
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
 use Term::ANSIColor;
 use List::Util qw/max min/;
+use List::MoreUtils qw/none/;
 use Color::ANSI::Util qw/ansifg ansibg/;
 
-has stone_number  => is => 'rw', default => 7;
+has frog_number   => is => 'rw', default => 6;
+has frog_width    => is => 'rw', default => 3;
+has stone_number  => is => 'rw', default => sub { my $self = shift; $self->frog_number + 1 };
 has stone_width   => is => 'rw', default => 7;
 has stone_gap     => is => 'rw', default => 2;
 
 has border_width  => is => 'rw', default => 2;
 has border_height => is => 'rw', default => 1;
-has border_color  => is => 'rw', default => color('reverse');
+has border_color  => is => 'rw', default => 'on_cyan';
 has content_width => is => 'rw', default => 70;
 has content_height => is => 'rw', default => 13;
+has padding       => is => 'rw', default => 4;
 
 has _frogs       => is => 'lazy';
 has current_frog => is => 'rw', default => '';
+has animations   => is => 'rw', default => sub { [] };
+has need_draw_background => is => 'rw', default => 1;
 
 sub draw {
-    my ( $self, $redraw ) = @_;
-
+    my ( $self ) = @_;
+    local $| = 1;
     $self->hide_cursor;
-    $self->draw_guide;
+    $self->draw_background if $self->need_draw_background;
     $self->draw_border;
-    $self->draw_stone;
-    $self->draw_frog;
     $self->draw_title;
+    $self->draw_frog;
+    $self->draw_guide;
+    $self->draw_stone;
 
 }
 
-sub draw_frog {
+sub draw_background {
     my $self = shift;
     $self->save_cursor;
-    $self->move_cursor(6, $self->content_height-1);
-    foreach my $index ( 0..$self->stone_number-1 ){
-        my $frog = $self->frog_on_stone($index);
-        my $gap;
-        my $blank;
-        my $frog_graph = $frog->graph;
-        $blank = ' ' x ( ( $self->stone_width - $frog->width ) / 2);
-        $frog_graph = $blank . $frog_graph . $blank;
-        $gap   = ' ' x $self->stone_gap;
-        print $frog_graph;
-        print $gap;
+    foreach ( 1..$self->board_height ){
+        foreach ( 1..$self->board_width ){
+            print ' ';
+        }
+        print "\n";
     }
-    say '';
     $self->restore_cursor;
+    $self->need_draw_background(0);
+}
+sub draw_frog {
+    my $self = shift;
+    foreach my $frog ( @{$self->_frogs} ){
+        $self->save_cursor;
+        $self->move_cursor($frog->x, $frog->y);
+        print $frog->graph;
+        $self->restore_cursor;
+    }
 }
 
 sub draw_stone {
@@ -109,21 +121,39 @@ sub draw_quit {
 sub draw_border {
     my $self = shift;
     $self->save_cursor;
-    say $self->border_color, " " x $self->board_width, color("reset") for 1..$self->border_height;
+    say color($self->border_color), " " x $self->board_width, color("reset") for 1..$self->border_height;
     foreach my $col ( 0..$self->content_height-1 ){
-        print $self->border_color, " " x $self->border_width, color("reset");
+        print color($self->border_color), " " x $self->border_width, color("reset");
         $self->move_cursor(70, 0);
-        print $self->border_color, " " x $self->border_width, color("reset");
+        print color($self->border_color), " " x $self->border_width, color("reset");
         print "\n";
     }
 
-    say $self->border_color, " " x $self->board_width, color("reset") for 1..$self->border_height;
+    say color($self->border_color), " " x $self->board_width, color("reset") for 1..$self->border_height;
     $self->restore_cursor;
+}
+
+sub add_animation {
+    my ( $self, $animation ) = @_;
+    if ( none { $_->name eq $animation->name } @{$self->animations} ){
+        push $self->animations, $animation;
+    }
+}
+
+sub remove_animation {
+    my ( $self, $animation ) = @_;
+    my $new_animations = [ grep { $_->name ne $animation->name } @{$self->animations} ];
+    $self->animations($new_animations);
 }
 
 sub board_width {
     my $self = shift;
     return $self->content_width + $self->border_width * 2;
+}
+
+sub board_height {
+    my $self = shift;
+    return $self->border_height * 2 + $self->content_height;
 }
 
 sub move_cursor {
@@ -171,18 +201,33 @@ sub set_frog {
 
 sub frog_on_stone {
     my ( $self, $stone_n ) = @_;
-    foreach my $n ( 0..$self->stone_number-1 ){
+    foreach my $n ( 0..$self->frog_number-1 ){
         my $frog = $self->get_frog($n);
-        return $frog if $frog->stone_index == $stone_n and $frog->direction ne 'null';
+        return $frog if $frog->stone_index == $stone_n;
     }
     my $null_frog = Games::FrogJump::Frog->new();
     return $null_frog;
 }
 
+sub jump_frog_left {
+    my ( $self, $frog, $step ) = @_;
+    $frog->stone_index($frog->stone_index - $step);
+    $frog->x($frog->x - $step * ( $self->stone_width + $self->stone_gap ));
+    $self->need_draw_background(1);
+}
+
+sub jump_frog_right {
+    my ( $self, $frog, $step ) = @_;
+    $frog->stone_index($frog->stone_index + $step);
+    $frog->x($frog->x + $step * ( $self->stone_width + $self->stone_gap ));
+    $self->need_draw_background(1);
+}
+
 sub _build__frogs {
     my $self = shift;
-    [ 1..$self->stone_number ];
+    [ 1..$self->frog_number ];
 }
+
 
 sub set_current_frog {
     my ( $self, $frog ) = @_;
@@ -190,5 +235,7 @@ sub set_current_frog {
     $self->current_frog($frog);
     $frog->active;
 }
+
+
 
 1;

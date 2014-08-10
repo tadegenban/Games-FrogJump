@@ -8,22 +8,22 @@ use File::HomeDir;
 
 extends 'Games::FrogJump::Board';
 
-has init_directions   => is => 'ro' => default => sub { [ 'right', 'right', 'right', 'null', 'left', 'left', 'left' ] };
+has init_directions   => is => 'ro' => default => sub { [ 'right', 'right', 'right', 'left', 'left', 'left' ] };
 has target_directions => is => 'ro' => default => sub { [ 'left', 'left', 'left', 'null', 'right', 'right', 'right' ] };
 
 sub init {
     my $self = shift;
     my $directions = $self->init_directions;
-    foreach my $index ( 0..$self->stone_number - 1 ){
+    foreach my $index ( 0..$self->frog_number - 1 ){
         my $frog = Games::FrogJump::Frog->new(
             direction    => $directions->[$index],
-           stone_index  => $index,
-            bg_color     => $index < 3  ? 'on_yellow' :
-                            $index == 3 ? 'on_black' :
-                            'on_green',
-            ansi         => $index < 3  ? '_--'  :
-                            $index == 3 ? '   ' :
-                            '--_',
+            stone_index  => $index < 3 ? $index : $index + 1,
+            bg_color     => $index < 3 ? 'on_yellow' : 'on_green',
+            ansi         => $index < 3 ? '_--'  : '--_',
+            x            => $index < 3 ?
+                            $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + $index * ( $self->stone_width + $self->stone_gap ) :
+                            $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + ($index + 1) * ( $self->stone_width + $self->stone_gap ),
+            y            => $self->content_height - 1,
             );
         $self->set_frog( $index, $frog );
     }
@@ -55,13 +55,13 @@ sub jump {
         $self->alarm_no_jump and return if $current_stone == $self->stone_number - 1;
         my $next_frog = $self->frog_on_stone($current_stone + 1);
         if ( $next_frog->direction eq 'null' ){
-            $current_frog->jump_right(1);
+            $self->jump_frog_right($current_frog, 1);
             return;
         }
         $self->alarm_no_jump and return if $current_stone == $self->stone_number - 2;
         my $next_next_frog = $self->frog_on_stone($current_stone + 2);
         if ( $next_next_frog->direction eq 'null' ){
-            $current_frog->jump_right(2);
+            $self->jump_frog_right($current_frog, 2);
             return;
         }
         $self->alarm_no_jump and return;
@@ -70,13 +70,13 @@ sub jump {
         $self->alarm_no_jump and return if $current_stone == 0;
         my $next_frog = $self->frog_on_stone($current_stone - 1);
         if ( $next_frog->direction eq 'null' ){
-            $current_frog->jump_left(1);
+            $self->jump_frog_left($current_frog, 1);
             return;
         }
         $self->alarm_no_jump and return if $current_stone == 1;
         my $next_next_frog = $self->frog_on_stone($current_stone - 2);
         if ( $next_next_frog->direction eq 'null' ){
-            $current_frog->jump_left(2);
+            $self->jump_frog_left($current_frog, 2);
             return;
         }
         $self->alarm_no_jump and return;
@@ -120,6 +120,15 @@ sub move_right {
 }
 
 sub alarm_no_jump {
+    my $self = shift;
+    my $animation = Games::FrogJump::Animation->new(
+        name     => 'alarm_no_jump',
+        duration => 0.5,
+        obj      => $self,
+        attr     => 'border_color',
+        snapshot => ['on_white', $self->border_color],
+        );
+    $self->add_animation($animation);
     return 1;
 }
 
