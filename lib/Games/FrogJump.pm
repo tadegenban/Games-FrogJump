@@ -31,7 +31,7 @@ package Games::FrogJump;
 use 5.012;
 use Moo;
 
-our $VERSION = '0.01';
+our $VERSION = '0.04';
 
 use Time::HiRes;
 our $FRAME_TIME = 1/10;
@@ -77,6 +77,7 @@ sub run {
               foreach my $animation ( @{$game->animations} ){
                   $game->remove_animation($animation) if $animation->end;
                   $animation->update;
+                  $game->need_draw_background(1);
               }
           }
           $game->draw;

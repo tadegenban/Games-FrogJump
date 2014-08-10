@@ -212,15 +212,50 @@ sub frog_on_stone {
 sub jump_frog_left {
     my ( $self, $frog, $step ) = @_;
     $frog->stone_index($frog->stone_index - $step);
-    $frog->x($frog->x - $step * ( $self->stone_width + $self->stone_gap ));
-    $self->need_draw_background(1);
+
+    my $stopx = $frog->x - $step * ( $self->stone_width + $self->stone_gap );
+
+    my $animation_x = Games::FrogJump::Animation->new(
+        name     => 'x',
+        duration => 0.5,
+        obj      => $frog,
+        attr     => 'x',
+        snapshot => [$frog->x, int(($frog->x + $stopx) / 2), $stopx],
+        );
+    my $animation_y = Games::FrogJump::Animation->new(
+        name     => 'y',
+        duration => 0.5,
+        obj      => $frog,
+        attr     => 'y',
+        snapshot => [$frog->y, $frog->y - $step, $frog->y],
+        );
+    $self->add_animation($animation_x);
+    $self->add_animation($animation_y);
+
 }
 
 sub jump_frog_right {
     my ( $self, $frog, $step ) = @_;
     $frog->stone_index($frog->stone_index + $step);
-    $frog->x($frog->x + $step * ( $self->stone_width + $self->stone_gap ));
-    $self->need_draw_background(1);
+
+    my $stopx = $frog->x + $step * ( $self->stone_width + $self->stone_gap);
+
+    my $animation_x = Games::FrogJump::Animation->new(
+        name     => 'x',
+        duration => 0.5,
+        obj      => $frog,
+        attr     => 'x',
+        snapshot => [$frog->x, int(($frog->x + $stopx) / 2), $stopx],
+        );
+    my $animation_y = Games::FrogJump::Animation->new(
+        name     => 'y',
+        duration => 0.5,
+        obj      => $frog,
+        attr     => 'y',
+        snapshot => [$frog->y, $frog->y - $step, $frog->y],
+        );
+    $self->add_animation($animation_x);
+    $self->add_animation($animation_y);
 }
 
 sub _build__frogs {
