@@ -27,40 +27,39 @@ has padding       => is => 'rw', default => 4;
 has _frogs       => is => 'lazy';
 has current_frog => is => 'rw', default => '';
 has animations   => is => 'rw', default => sub { [] };
-has need_draw_background => is => 'rw', default => 1;
 
 sub draw {
     my ( $self ) = @_;
     local $| = 1;
     $self->hide_cursor;
-    $self->draw_background if $self->need_draw_background;
+    $self->draw_frog;
     $self->draw_border;
     $self->draw_title;
-    $self->draw_frog;
     $self->draw_guide;
     $self->draw_stone;
 
 }
 
-sub draw_background {
-    my $self = shift;
-    $self->save_cursor;
-    foreach ( 1..$self->board_height ){
-        foreach ( 1..$self->board_width ){
-            print ' ';
-        }
-        print "\n";
-    }
-    $self->restore_cursor;
-    $self->need_draw_background(0);
-}
 sub draw_frog {
     my $self = shift;
     foreach my $frog ( @{$self->_frogs} ){
-        $self->save_cursor;
-        $self->move_cursor($frog->x, $frog->y);
-        print $frog->graph;
-        $self->restore_cursor;
+        if ( $frog->x ne $frog->oldx or $frog->y ne $frog->oldy ){
+            $self->save_cursor;
+            $self->move_cursor($frog->oldx, $frog->oldy);
+            print ' ' x 3;
+            $self->restore_cursor;
+
+            $self->save_cursor;
+            $self->move_cursor($frog->x, $frog->y);
+            print $frog->graph;
+            $self->restore_cursor;
+        }
+        else{
+            $self->save_cursor;
+            $self->move_cursor($frog->x, $frog->y);
+            print $frog->graph;
+            $self->restore_cursor;
+        }
     }
 }
 
@@ -219,14 +218,14 @@ sub jump_frog_left {
         name     => 'x',
         duration => 0.5,
         obj      => $frog,
-        attr     => 'x',
+        attr     => 'set_x',
         snapshot => [$frog->x, int(($frog->x + $stopx) / 2), $stopx],
         );
     my $animation_y = Games::FrogJump::Animation->new(
         name     => 'y',
         duration => 0.5,
         obj      => $frog,
-        attr     => 'y',
+        attr     => 'set_y',
         snapshot => [$frog->y, $frog->y - $step, $frog->y],
         );
     $self->add_animation($animation_x);
@@ -244,14 +243,14 @@ sub jump_frog_right {
         name     => 'x',
         duration => 0.5,
         obj      => $frog,
-        attr     => 'x',
+        attr     => 'set_x',
         snapshot => [$frog->x, int(($frog->x + $stopx) / 2), $stopx],
         );
     my $animation_y = Games::FrogJump::Animation->new(
         name     => 'y',
         duration => 0.5,
         obj      => $frog,
-        attr     => 'y',
+        attr     => 'set_y',
         snapshot => [$frog->y, $frog->y - $step, $frog->y],
         );
     $self->add_animation($animation_x);

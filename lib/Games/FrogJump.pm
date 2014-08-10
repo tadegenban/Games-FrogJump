@@ -34,7 +34,7 @@ use Moo;
 our $VERSION = '0.04';
 
 use Time::HiRes;
-our $FRAME_TIME = 1/10;
+our $FRAME_TIME = 1/20;
 
 use Games::FrogJump::Game;
 use Games::FrogJump::Frog;
@@ -52,8 +52,8 @@ sub run {
         if ( !$game ) {
             $game = Games::FrogJump::Game->new();
         }
-        if ( $restart ) {
-            $game->need_draw_background(1);
+        if ( $restart ){
+            $game->restart;
         }
         $game->init;
       RUN: $game->draw;
@@ -77,7 +77,6 @@ sub run {
               foreach my $animation ( @{$game->animations} ){
                   $game->remove_animation($animation) if $animation->end;
                   $animation->update;
-                  $game->need_draw_background(1);
               }
           }
           $game->draw;

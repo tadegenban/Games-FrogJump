@@ -13,6 +13,8 @@ has stored_ansi  => is => 'rw';
 has ansi         => is => 'rw', default => '   ';
 has x            => is => 'rw', default => 0;
 has y            => is => 'rw', default => 0;
+has oldx         => is => 'rw', default => 0;
+has oldy         => is => 'rw', default => 0;
 
 sub graph {
     my $self = shift;
@@ -33,4 +35,15 @@ sub unactive {
     $self->ansi($self->stored_ansi);
 }
 
+sub set_x {
+    my ( $self, $value ) = @_;
+    $self->oldx($self->x);
+    $self->x($value);
+}
+
+sub set_y {
+    my ( $self, $value ) = @_;
+    $self->oldy($self->y);
+    $self->y($value);
+}
 1;

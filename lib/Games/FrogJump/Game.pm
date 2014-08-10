@@ -24,6 +24,10 @@ sub init {
                             $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + $index * ( $self->stone_width + $self->stone_gap ) :
                             $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + ($index + 1) * ( $self->stone_width + $self->stone_gap ),
             y            => $self->content_height - 1,
+            oldx         => $index < 3 ?
+                            $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + $index * ( $self->stone_width + $self->stone_gap ) :
+                            $self->border_width + $self->padding + ($self->stone_width - $self->frog_width) / 2 + ($index + 1) * ( $self->stone_width + $self->stone_gap ),
+            oldy         => $self->content_height - 1,
             );
         $self->set_frog( $index, $frog );
     }
@@ -143,5 +147,11 @@ sub win {
 sub lose {
     my $self = shift;
     return 0;
+}
+
+sub restart {
+    my $self = shift;
+    $self->move_cursor(0, $self->border_height + $self->content_height);
+    $self->clear_screen;
 }
 1;
