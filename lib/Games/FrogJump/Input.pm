@@ -5,7 +5,6 @@ use warnings;
 
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
 use Term::ReadKey;
-use Time::HiRes;
 
 eval 'END { ReadMode "normal" }';
 eval 'ReadMode "cbreak"';

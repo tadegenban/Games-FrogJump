@@ -4,12 +4,9 @@ use strict;
 use warnings;
 use Moo;
 
-use Text::Wrap;
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
 use Term::ANSIColor;
-use List::Util qw/max min/;
 use List::MoreUtils qw/none/;
-use Color::ANSI::Util qw/ansifg ansibg/;
 
 has frog_number   => is => 'rw', default => 6;
 has frog_width    => is => 'rw', default => 3;

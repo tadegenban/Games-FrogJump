@@ -2,9 +2,6 @@ package Games::FrogJump::Game;
 use 5.012;
 use Moo;
 
-use Storable;
-use File::Spec::Functions;
-use File::HomeDir;
 
 extends 'Games::FrogJump::Board';
 
