@@ -2,6 +2,7 @@ package Games::FrogJump::Board;
 use 5.012;
 use strict;
 use warnings;
+use experimental 'autoderef';
 use Moo;
 
 use if $^O eq "MSWin32", "Win32::Console::ANSI";
