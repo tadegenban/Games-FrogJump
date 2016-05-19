@@ -106,6 +106,7 @@ sub draw_win {
     $self->save_cursor;
     $self->move_cursor(30, 2);
     print color('green') . 'You  Win  @@_' . color('reset');
+    print "\n";
     $self->restore_cursor;
 }
 

@@ -50,6 +50,7 @@ sub run {
     my $game;
     my $restart;
     my $quit;
+    my $win;
 
     while (!$quit) {
 
@@ -85,6 +86,11 @@ sub run {
                 }
             }
             $game->draw;
+
+            if ( $game->win ) {
+                $game->draw_win unless @{ $game->animations };
+            }
+
             my $new_time = Time::HiRes::time;
             my $delta_time = $new_time - $time;
             my $delay = $FRAME_TIME - $delta_time;
@@ -93,13 +99,7 @@ sub run {
                 Time::HiRes::sleep($delay);
                 $time += $delay;
             }
-            if ( $game->win || $game->lose ){
-                last PLAY;
-            }
-        }
-        if ( $game->win ){
-            $game->draw_win;
-            $quit = 1;
+
         }
     }
     $game->draw_quit;
